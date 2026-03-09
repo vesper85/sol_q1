@@ -1,10 +1,15 @@
-function computeTotalCost(amount, pricePerToken, tiers) {
+interface Tier {
+  minAmount: number;
+  maxAmount: number;
+  pricePerToken: number;
+}
+
+export function computeTotalCost(amount: number, pricePerToken: number, tiers: Tier[]): number {
   if (!tiers || tiers.length === 0) {
     return amount * pricePerToken;
   }
 
   const sortedTiers = [...tiers].sort((a, b) => a.minAmount - b.minAmount);
-
   let remaining = amount;
   let totalCost = 0;
 
@@ -16,12 +21,9 @@ function computeTotalCost(amount, pricePerToken, tiers) {
     remaining -= tokensFromTier;
   }
 
-  // Overflow beyond all tiers uses flat pricePerToken
   if (remaining > 0) {
     totalCost += remaining * pricePerToken;
   }
 
   return totalCost;
 }
-
-module.exports = { computeTotalCost };
